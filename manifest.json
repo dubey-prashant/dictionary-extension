@@ -1,0 +1,14 @@
+{
+   "name": "Dictionary - dubeytech",
+   "description": "English Dictionary",
+   "version": "1.0.0",
+   "author": "Prashant Dubey",
+   "manifest_version": 3,
+   "action": {
+      "default_popup": "popup.html",
+      "default_icon": "icon.png"
+   },
+   "permissions": [
+      "activeTab"
+   ]
+}
