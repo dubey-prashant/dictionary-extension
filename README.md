@@ -1,14 +1,50 @@
-# Lexicon - Dictionary Extension (React Version)
+# Lexicon - Minimalist Dictionary Extension
 
-A beautiful, futuristic dictionary browser extension built with React, featuring a sci-fi cyberpunk glassmorphism design.
+A beautiful, fast, and intelligent dictionary extension with smart caching and AI-powered fallback.
 
-## 🚀 Features
+## ✨ Features
 
-- **Beautiful UI**: Sci-fi cyberpunk design with glassmorphism effects
-- **Fast Lookups**: Instant word definitions, examples, and pronunciations
-- **Audio Pronunciation**: Click speaker icon to hear word pronunciation
-- **Compact Design**: Space-efficient with expandable definitions
-- **Modern Tech**: Built with React + Vite + Tailwind CSS
+### 🔍 **Smart Dictionary Search**
+
+- **Primary API**: Uses [dictionaryapi.dev](https://dictionaryapi.dev) for comprehensive word definitions
+- **Intelligent Caching**: Stores searched words locally for 7 days - no repeat API calls
+- **Auto-complete**: Real-time word suggestions as you type
+- **Audio Pronunciation**: Play audio pronunciation when available
+
+### 🌟 **Word of the Day**
+
+- **Primary Source**: [api.wotd.site](https://api.wotd.site) with Wordnik backup
+- **Daily Caching**: Fetches once per day, cached in localStorage
+- **Auto-cleanup**: Removes old cache entries automatically
+- **Fallback System**: Beautiful curated words if APIs are unavailable
+
+### 🤖 **AI-Powered Fallback**
+
+- **Smart Trigger**: When a word isn't found in the dictionary, shows "Search with AI" option
+- **Gemini Integration**: Uses Google's Gemini API for comprehensive definitions
+- **Secure Storage**: API key stored locally in browser
+- **Formatted Results**: AI responses formatted for easy reading
+
+### 💾 **Smart Caching Strategy**
+
+- **Dictionary Cache**: 7-day expiry, size-limited (100 entries max)
+- **Word of the Day Cache**: Daily refresh, keeps last 7 days
+- **Search History**: Tracks up to 50 recent searches with success status
+- **Auto-cleanup**: Removes expired entries automatically
+
+### 🎨 **Minimalist UI**
+
+- **Compact Design**: Clean, space-efficient layout
+- **Cyberpunk Theme**: Beautiful gradient backgrounds with subtle animations
+- **Responsive**: Works on all screen sizes
+- **Accessibility**: Keyboard navigation and screen reader friendly
+
+### 📊 **Advanced Features**
+
+- **Search History**: Quick access to recently searched words
+- **Cache Statistics**: View cache usage and clear if needed
+- **Error Handling**: Graceful fallbacks for network issues
+- **Performance**: Instant results for cached words
 
 ## 🛠️ Development
 

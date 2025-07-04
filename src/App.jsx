@@ -1,12 +1,24 @@
 import { useState } from 'react';
 import SearchForm from './components/SearchForm';
 import ResultsDisplay from './components/ResultsDisplay';
+import SearchHistory from './components/SearchHistory';
+import CacheStats from './components/CacheStats';
 import './style.css';
 
 function App() {
   const [searchResult, setSearchResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Handle search from history
+  const handleHistoryWordClick = (word) => {
+    // This will be handled by the SearchForm's performSearch method
+    // We'll need to trigger a search programmatically
+    console.log('Search from history:', word);
+    // For now, just clear current results to show WOTD
+    setSearchResult(null);
+    setError(null);
+  };
 
   return (
     <div className='w-96 min-h-[500px] bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden'>
@@ -43,7 +55,15 @@ function App() {
           onLoading={setIsLoading}
           onError={setError}
         />
+
+        {/* Show search history only when no current search result or error */}
+        {!searchResult && !error && !isLoading && (
+          <SearchHistory onWordClick={handleHistoryWordClick} />
+        )}
       </div>
+
+      {/* Cache Statistics */}
+      <CacheStats />
     </div>
   );
 }
