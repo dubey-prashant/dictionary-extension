@@ -110,7 +110,7 @@ const ErrorState = ({ error, onSearchWithAI }) => {
               <p className='text-xs text-slate-400 mt-1'>
                 Get your free API key from{' '}
                 <a
-                  href='https://makersuite.google.com/app/apikey'
+                  href='https://aistudio.google.com/app/apikey'
                   target='_blank'
                   rel='noopener noreferrer'
                   className='text-cyan-400 hover:text-cyan-300'

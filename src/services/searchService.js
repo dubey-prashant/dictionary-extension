@@ -1,10 +1,11 @@
-// Central search service with smart caching and AI fallback
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
 class SearchService {
   constructor() {
     this.DICTIONARY_CACHE_KEY = 'dictionary_cache';
     this.SEARCH_HISTORY_KEY = 'search_history';
-    this.CACHE_EXPIRY_DAYS = 7; // Cache dictionary results for 7 days
-    this.MAX_HISTORY_ITEMS = 50;
+    this.CACHE_EXPIRY_DAYS = 365;
+    this.MAX_HISTORY_ITEMS = 500;
   }
 
   // Get cached dictionary result
@@ -178,39 +179,21 @@ class SearchService {
     }
 
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  {
-                    text: `Define the word or phrase "${trimmedWord}" in a comprehensive way. Include:
+      // Initialize the Gemini AI client
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+
+      const prompt = `Define the word or phrase "${trimmedWord}" in a comprehensive way. Include:
 1. Definition(s) with part of speech
 2. Example sentence(s)
 3. Etymology if relevant
 4. Synonyms if applicable
 
-Format your response as a clear, well-structured explanation suitable for a dictionary application.`,
-                  },
-                ],
-              },
-            ],
-          }),
-        }
-      );
+Format your response as a clear, well-structured explanation suitable for a dictionary application.`;
 
-      if (!response.ok) {
-        throw new Error(`AI search failed: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const aiResponse = response.text();
 
       if (!aiResponse) {
         throw new Error('No response from AI service');
@@ -230,6 +213,18 @@ Format your response as a clear, well-structured explanation suitable for a dict
       return aiResult;
     } catch (error) {
       this.addToHistory(trimmedWord, null);
+
+      // Handle specific Gemini API errors
+      if (error.message.includes('API_KEY_INVALID')) {
+        throw new Error('Invalid API key. Please check your Gemini API key.');
+      } else if (error.message.includes('QUOTA_EXCEEDED')) {
+        throw new Error('API quota exceeded. Please try again later.');
+      } else if (error.message.includes('RATE_LIMIT_EXCEEDED')) {
+        throw new Error(
+          'Rate limit exceeded. Please wait a moment and try again.'
+        );
+      }
+
       throw new Error(`AI search failed: ${error.message}`);
     }
   }

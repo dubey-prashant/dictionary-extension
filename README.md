@@ -21,7 +21,9 @@ A beautiful, fast, and intelligent dictionary extension with smart caching and A
 ### 🤖 **AI-Powered Fallback**
 
 - **Smart Trigger**: When a word isn't found in the dictionary, shows "Search with AI" option
-- **Gemini Integration**: Uses Google's Gemini API for comprehensive definitions
+- **Gemini 2.5 Flash**: Uses Google's latest Gemini 2.5 Flash model via official SDK
+- **Enhanced Performance**: Faster responses and better accuracy with the new model
+- **Better Error Handling**: Improved error messages for API quota, rate limits, and invalid keys
 - **Secure Storage**: API key stored locally in browser
 - **Formatted Results**: AI responses formatted for easy reading
 
@@ -65,6 +67,18 @@ npm run dev
 # Build for production
 npm run build
 ```
+
+### AI Feature Setup (Optional)
+
+To enable AI-powered definitions for words not found in the dictionary:
+
+1. **Get a Gemini API Key**: Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. **Create a free account** if you don't have one
+3. **Generate an API key** for the Gemini API
+4. **First AI search**: When you search for a word not found in the dictionary, click "Search with AI"
+5. **Enter your API key** when prompted - it will be saved securely in your browser
+
+**Note**: The API key is stored locally in your browser and never sent to our servers.
 
 ### Browser Extension Installation
 
