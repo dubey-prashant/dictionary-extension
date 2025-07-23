@@ -15,7 +15,7 @@ const SearchForm = ({ onSearch, onLoading, onError }) => {
     isVisible,
     selectedIndex,
     isLoading: suggestionsLoading,
-    debouncedFetch,
+    fetchSuggestions,
     handleKeyDown,
     selectSuggestion,
     hideSuggestions,
@@ -41,7 +41,7 @@ const SearchForm = ({ onSearch, onLoading, onError }) => {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setQuery(value);
-    debouncedFetch(value.trim());
+    fetchSuggestions(value.trim()); // Instant local suggestions, no debouncing needed
   };
 
   const handleKeyDownEvent = (e) => {
@@ -112,14 +112,14 @@ const SearchForm = ({ onSearch, onLoading, onError }) => {
   };
 
   return (
-    <div ref={formRef} className='relative mb-4'>
+    <div ref={formRef} className='relative mb-3'>
       {/* Header with Logo and History */}
-      <div className='flex items-center justify-between mb-4'>
+      <div className='flex items-center justify-between mb-3'>
         {/* Logo */}
-        <div className='flex items-center space-x-3'>
-          <div className='w-10 h-10 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg'>
+        <div className='flex items-center space-x-2.5'>
+          <div className='w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center shadow-lg'>
             <svg
-              className='w-6 h-6 text-white'
+              className='w-5 h-5 text-white'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -132,7 +132,7 @@ const SearchForm = ({ onSearch, onLoading, onError }) => {
               ></path>
             </svg>
           </div>
-          <h1 className='text-2xl font-bold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent tracking-wide'>
+          <h1 className='text-xl font-bold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent tracking-wide'>
             LEXICON
           </h1>
         </div>
@@ -140,11 +140,11 @@ const SearchForm = ({ onSearch, onLoading, onError }) => {
         {/* History Button */}
         <button
           onClick={() => setIsHistoryOpen(true)}
-          className='bg-slate-800/50 backdrop-blur-sm border border-slate-600/30 hover:border-slate-500/50 p-2.5 rounded-xl transition-all duration-300 group hover:shadow-lg'
+          className='bg-slate-800/50 backdrop-blur-sm border border-slate-600/30 hover:border-slate-500/50 p-2 rounded-lg transition-all duration-300 group hover:shadow-lg'
           title='Search History'
         >
           <svg
-            className='w-5 h-5 text-slate-400 group-hover:text-cyan-300 transition-colors duration-300'
+            className='w-4 h-4 text-slate-400 group-hover:text-cyan-300 transition-colors duration-300'
             fill='none'
             stroke='currentColor'
             viewBox='0 0 24 24'
@@ -161,48 +161,46 @@ const SearchForm = ({ onSearch, onLoading, onError }) => {
 
       {/* Search Form */}
       <form onSubmit={handleSubmit}>
-        <div className='bg-glass-gradient backdrop-blur-md border border-white/20 rounded-xl shadow-glass p-1'>
-          <div className='flex items-center'>
-            <div className='flex-1 relative flex items-center'>
-              <input
-                ref={inputRef}
-                type='text'
-                name='word'
-                value={query}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDownEvent}
-                placeholder='Search any word...'
-                className='w-full bg-slate-800/50 backdrop-blur-sm border border-slate-600/30 rounded-lg pl-4 pr-12 py-3 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400/50 transition-all duration-300'
-                autoComplete='off'
-                spellCheck='false'
-              />
+        <div className='group bg-glass-gradient backdrop-blur-md border border-white/20 focus-within:border-purple-300/80 rounded-xl shadow-glass p-1 flex items-center gap-2'>
+          <div className='flex-1 relative flex items-center'>
+            <input
+              ref={inputRef}
+              type='text'
+              name='word'
+              value={query}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDownEvent}
+              placeholder='Search any word...'
+              className='w-full  pl-4 pr-12 py-2 text-slate-200 placeholder-slate-400 focus:outline-none text-sm'
+              autoComplete='off'
+              spellCheck='false'
+            />
 
-              {suggestionsLoading && (
-                <div className='absolute right-4'>
-                  <div className='w-4 h-4 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin'></div>
-                </div>
-              )}
-            </div>
-
-            <button
-              type='submit'
-              className='ml-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white p-3 rounded-lg transition-all duration-300 hover:shadow-lg'
-            >
-              <svg
-                className='w-5 h-5'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-                ></path>
-              </svg>
-            </button>
+            {suggestionsLoading && (
+              <div className='absolute right-0'>
+                <div className='w-3.5 h-3.5 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin'></div>
+              </div>
+            )}
           </div>
+
+          <button
+            type='submit'
+            className='text-white/20 group-focus-within:text-purple-300 p-2.5 rounded-lg transition-all duration-300 hover:shadow-lg'
+          >
+            <svg
+              className='w-4 h-4'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+              ></path>
+            </svg>
+          </button>
         </div>
       </form>
 

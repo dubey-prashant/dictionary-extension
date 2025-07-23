@@ -2,54 +2,6 @@
 class WordOfTheDayService {
   constructor() {
     this.WOTD_CACHE_KEY = 'wotd_cache';
-    this.FALLBACK_WORDS = [
-      {
-        word: 'serendipity',
-        definition:
-          'The occurrence and development of events by chance in a happy or beneficial way',
-        example: 'A fortunate stroke of serendipity brought them together',
-        partOfSpeech: 'noun',
-      },
-      {
-        word: 'ephemeral',
-        definition: 'Lasting for a very short time',
-        example: 'The beauty of cherry blossoms is ephemeral',
-        partOfSpeech: 'adjective',
-      },
-      {
-        word: 'petrichor',
-        definition:
-          'A pleasant smell accompanying the first rain after a long period of dry weather',
-        example: 'The petrichor after the storm was refreshing',
-        partOfSpeech: 'noun',
-      },
-      {
-        word: 'sonder',
-        definition:
-          'The realization that each passerby has a life as vivid and complex as your own',
-        example: 'Walking through the busy street, she felt a moment of sonder',
-        partOfSpeech: 'noun',
-      },
-      {
-        word: 'luminous',
-        definition: 'Full of or shedding light; bright or shining',
-        example: 'The luminous moon lit up the entire garden',
-        partOfSpeech: 'adjective',
-      },
-      {
-        word: 'resilience',
-        definition:
-          'The ability to recover quickly from difficulties; toughness',
-        example: 'Her resilience helped her overcome every challenge',
-        partOfSpeech: 'noun',
-      },
-      {
-        word: 'wanderlust',
-        definition: 'A strong desire to travel and explore the world',
-        example: 'His wanderlust led him to visit over thirty countries',
-        partOfSpeech: 'noun',
-      },
-    ];
   }
 
   // Get today's date string for cache key
@@ -115,39 +67,6 @@ class WordOfTheDayService {
     }
   }
 
-  // Get fallback word based on day
-  getFallbackWord() {
-    const today = new Date();
-    const dayIndex = today.getDate() % this.FALLBACK_WORDS.length;
-    return this.FALLBACK_WORDS[dayIndex];
-  }
-
-  // Fetch from api.wotd.site
-  async fetchFromWOTDSite() {
-    try {
-      const response = await fetch('https://api.wotd.site/word');
-
-      if (!response.ok) {
-        throw new Error(`WOTD API failed: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      // Format the data to match our structure
-      return {
-        word: data.word || 'explore',
-        definition: data.definition || 'To investigate or travel through',
-        example: data.example || `Let's explore new vocabulary together`,
-        partOfSpeech: data.part_of_speech || 'verb',
-        source: 'wotd.site',
-      };
-    } catch (error) {
-      console.error('Error fetching from WOTD site:', error);
-      throw error;
-    }
-  }
-
-  // Fetch from Wordnik as backup
   async fetchFromWordnik() {
     try {
       const response = await fetch(
@@ -187,32 +106,14 @@ class WordOfTheDayService {
       return cached;
     }
 
-    // Try primary API first
-    try {
-      const wotd = await this.fetchFromWOTDSite();
-      this.cacheWOTD(wotd);
-      return wotd;
-    } catch {
-      console.log('Primary WOTD API failed, trying backup...');
-    }
-
-    // Try Wordnik as backup
+    // Try Wordnik
     try {
       const wotd = await this.fetchFromWordnik();
       this.cacheWOTD(wotd);
       return wotd;
     } catch {
-      console.log('Backup WOTD API failed, using fallback...');
+      console.log('fetchFromWordnik failed...');
     }
-
-    // Use fallback word
-    const fallback = this.getFallbackWord();
-    const fallbackWithSource = {
-      ...fallback,
-      source: 'fallback',
-    };
-    this.cacheWOTD(fallbackWithSource);
-    return fallbackWithSource;
   }
 
   // Clean up old cache entries

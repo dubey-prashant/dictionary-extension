@@ -8,7 +8,8 @@ A beautiful, fast, and intelligent dictionary extension with smart caching and A
 
 - **Primary API**: Uses [dictionaryapi.dev](https://dictionaryapi.dev) for comprehensive word definitions
 - **Intelligent Caching**: Stores searched words locally for 7 days - no repeat API calls
-- **Auto-complete**: Real-time word suggestions as you type
+- **Hybrid Autocomplete**: Combines local word list (15,000+ words) with Datamuse API for instant + comprehensive suggestions
+- **Local Word List**: Uses SCOWL (Spell Checker Oriented Word Lists) for offline suggestions
 - **Audio Pronunciation**: Play audio pronunciation when available
 
 ### 🌟 **Word of the Day**

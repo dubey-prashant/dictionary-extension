@@ -1,4 +1,5 @@
 import React from 'react';
+import AutocompleteShimmer from './AutocompleteShimmer';
 
 const AutocompleteDropdown = ({
   suggestions,
@@ -11,32 +12,18 @@ const AutocompleteDropdown = ({
 
   return (
     <div className='absolute z-50 w-full top-full left-0 bg-glass-gradient backdrop-blur-md border border-white/20 rounded-xl shadow-glass animate-fade-in'>
-      {isLoading && (
-        <div className='px-3 py-2 text-center'>
-          <div className='flex items-center justify-center space-x-1'>
-            <div className='w-1 h-1 bg-cyan-400 rounded-full animate-pulse'></div>
-            <div
-              className='w-1 h-1 bg-blue-400 rounded-full animate-pulse'
-              style={{ animationDelay: '0.1s' }}
-            ></div>
-            <div
-              className='w-1 h-1 bg-purple-400 rounded-full animate-pulse'
-              style={{ animationDelay: '0.2s' }}
-            ></div>
-            <span className='ml-2 text-xs text-cyan-300 font-medium'>
-              SCANNING...
-            </span>
-          </div>
-        </div>
-      )}
+      {/* Show shimmer when loading and no suggestions yet */}
+      {isLoading && suggestions.length === 0 && <AutocompleteShimmer />}
 
+      {/* No suggestions found (when not loading) */}
       {!isLoading && suggestions.length === 0 && (
         <div className='px-3 py-2 text-center text-slate-400 text-xs'>
           No suggestions found
         </div>
       )}
 
-      {!isLoading && suggestions.length > 0 && (
+      {/* Show suggestions */}
+      {suggestions.length > 0 && (
         <div className='py-1'>
           {suggestions.map((suggestion, index) => (
             <button
@@ -69,6 +56,12 @@ const AutocompleteDropdown = ({
         </div>
       )}
 
+      {/* Show minimal shimmer when API is enhancing existing suggestions */}
+      {isLoading && suggestions.length > 0 && (
+        <AutocompleteShimmer minimal={true} />
+      )}
+
+      {/* Controls help */}
       {suggestions.length > 0 && (
         <div className='px-3 py-1.5 border-t border-white/10 bg-slate-800/30'>
           <div className='flex items-center justify-between text-xs text-slate-400'>

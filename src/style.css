@@ -49,6 +49,15 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.2s ease-out;
 }
@@ -67,6 +76,10 @@
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s ease-in-out infinite;
 }
 
 /* Custom shadows for cyber theme */

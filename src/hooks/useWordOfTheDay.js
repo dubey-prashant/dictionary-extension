@@ -27,9 +27,6 @@ export const useWordOfTheDay = () => {
     };
 
     fetchWordOfTheDay();
-
-    // Clean up cache on mount
-    wordOfTheDayService.cleanupCache();
   }, []);
 
   return { wordOfTheDay, isLoading };
