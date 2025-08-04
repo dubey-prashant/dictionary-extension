@@ -1,16 +1,17 @@
 # Lexicon - Minimalist Dictionary Extension
 
-A beautiful, fast, and intelligent dictionary extension with smart caching and AI-powered fallback.
+A beautiful, fast, and intelligent dictionary extension with smart caching and comprehensive word information.
 
 ## ✨ Features
 
 ### 🔍 **Smart Dictionary Search**
 
-- **Primary API**: Uses [dictionaryapi.dev](https://dictionaryapi.dev) for comprehensive word definitions
-- **Intelligent Caching**: Stores searched words locally for 7 days - no repeat API calls
+- **Primary API**: Uses [Words API](https://rapidapi.com/dpventures/api/wordsapi) for comprehensive word definitions and rich linguistic data
+- **Intelligent Caching**: Stores searched words locally for 1 year - no repeat API calls
+- **Rich Word Data**: Provides definitions, synonyms, antonyms, examples, pronunciation, syllables, and frequency
 - **Hybrid Autocomplete**: Combines local word list (15,000+ words) with Datamuse API for instant + comprehensive suggestions
 - **Local Word List**: Uses SCOWL (Spell Checker Oriented Word Lists) for offline suggestions
-- **Audio Pronunciation**: Play audio pronunciation when available
+- **Multiple Pronunciations**: Displays pronunciation guides for different dialects
 
 ### 🌟 **Word of the Day**
 
@@ -19,20 +20,20 @@ A beautiful, fast, and intelligent dictionary extension with smart caching and A
 - **Auto-cleanup**: Removes old cache entries automatically
 - **Fallback System**: Beautiful curated words if APIs are unavailable
 
-### 🤖 **AI-Powered Fallback**
+### 📚 **Comprehensive Word Information**
 
-- **Smart Trigger**: When a word isn't found in the dictionary, shows "Search with AI" option
-- **Gemini 2.5 Flash**: Uses Google's latest Gemini 2.5 Flash model via official SDK
-- **Enhanced Performance**: Faster responses and better accuracy with the new model
-- **Better Error Handling**: Improved error messages for API quota, rate limits, and invalid keys
-- **Secure Storage**: API key stored locally in browser
-- **Formatted Results**: AI responses formatted for easy reading
+- **Multiple Definitions**: Shows all definitions organized by part of speech
+- **Rich Examples**: Multiple usage examples for better understanding
+- **Synonyms & Antonyms**: Comprehensive lists for vocabulary building
+- **Word Frequency**: Indicates how commonly used a word is
+- **Syllable Breakdown**: Shows syllable count and division
+- **Pronunciation Guide**: Multiple pronunciation variants
 
 ### 💾 **Smart Caching Strategy**
 
-- **Dictionary Cache**: 7-day expiry, size-limited (100 entries max)
+- **Dictionary Cache**: 1-year expiry, size-limited (100 entries max)
 - **Word of the Day Cache**: Daily refresh, keeps last 7 days
-- **Search History**: Tracks up to 50 recent searches with success status
+- **Search History**: Tracks up to 500 recent searches with full data
 - **Auto-cleanup**: Removes expired entries automatically
 
 ### 🎨 **Minimalist UI**
@@ -44,8 +45,8 @@ A beautiful, fast, and intelligent dictionary extension with smart caching and A
 
 ### 📊 **Advanced Features**
 
-- **Search History**: Quick access to recently searched words
-- **Cache Statistics**: View cache usage and clear if needed
+- **Full-Page Search History**: Dedicated history page with search and filtering
+- **Route-Based Navigation**: Clean navigation between main search and history
 - **Error Handling**: Graceful fallbacks for network issues
 - **Performance**: Instant results for cached words
 
@@ -55,28 +56,53 @@ A beautiful, fast, and intelligent dictionary extension with smart caching and A
 
 - Node.js (v18+)
 - npm
+- Words API key from [RapidAPI](https://rapidapi.com/dpventures/api/wordsapi)
 
 ### Setup
 
+1. **Clone the repository**
+
 ```bash
-# Install dependencies
+git clone <repository-url>
+cd dictionary-extension
+```
+
+2. **Install dependencies**
+
+```bash
 npm install
+```
 
-# Start development server
+3. **Set up environment variables**
+
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env and add your Words API key
+VITE_RAPIDAPI_KEY=your_rapidapi_key_here
+VITE_RAPIDAPI_HOST=wordsapiv1.p.rapidapi.com
+```
+
+4. **Get your Words API key**
+
+   - Visit [Words API on RapidAPI](https://rapidapi.com/dpventures/api/wordsapi)
+   - Sign up for a free account
+   - Subscribe to the free tier (500 requests/month)
+   - Copy your API key to the `.env` file
+
+5. **Start development server**
+
+```bash
 npm run dev
+```
 
-# Build for production
+6. **Build for production**
+
+```bash
 npm run build
 ```
 
-### AI Feature Setup (Optional)
-
-To enable AI-powered definitions for words not found in the dictionary:
-
-1. **Get a Gemini API Key**: Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. **Create a free account** if you don't have one
-3. **Generate an API key** for the Gemini API
-4. **First AI search**: When you search for a word not found in the dictionary, click "Search with AI"
 5. **Enter your API key** when prompted - it will be saved securely in your browser
 
 **Note**: The API key is stored locally in your browser and never sent to our servers.

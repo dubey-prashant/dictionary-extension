@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 // Loading Component
 const LoadingState = () => (
@@ -91,28 +91,6 @@ const ErrorState = ({ error }) => {
 
 // Main Results Display Component
 const ResultsDisplay = ({ result, isLoading, error }) => {
-  const [expandedDefinitions, setExpandedDefinitions] = useState({});
-
-  // Toggle definition expansion
-  const toggleDefinitions = (meaningIndex) => {
-    setExpandedDefinitions((prev) => ({
-      ...prev,
-      [meaningIndex]: !prev[meaningIndex],
-    }));
-  };
-
-  // Get audio URL for pronunciation
-  const getAudioUrl = (phonetics) => {
-    if (!phonetics || !Array.isArray(phonetics)) return null;
-
-    for (const phonetic of phonetics) {
-      if (phonetic && phonetic.audio && phonetic.audio.trim() !== '') {
-        return phonetic.audio;
-      }
-    }
-    return null;
-  };
-
   // Show loading state
   if (isLoading) {
     return <LoadingState />;
@@ -129,16 +107,15 @@ const ResultsDisplay = ({ result, isLoading, error }) => {
   }
 
   // Show dictionary results
-  if (!Array.isArray(result) || result.length === 0) {
+  if (!result || typeof result !== 'object') {
     return null;
   }
 
-  const wordData = result[0];
-  if (!wordData) {
+  // Words API returns a single object, not an array
+  const wordData = result;
+  if (!wordData || !wordData.word) {
     return null;
   }
-
-  const audioUrl = getAudioUrl(wordData.phonetics);
 
   return (
     <div className='animate-slide-up'>
@@ -165,167 +142,159 @@ const ResultsDisplay = ({ result, isLoading, error }) => {
             <h3 className='text-lg font-bold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent tracking-wide'>
               {wordData.word.toUpperCase()}
             </h3>
-            {/* Pronunciation button */}
-            {audioUrl && (
-              <button
-                onClick={() => {
-                  const audio = new Audio(audioUrl);
-                  audio
-                    .play()
-                    .catch((e) => console.error('Audio play failed:', e));
-                }}
-                className='group backdrop-blur-sm border bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border-cyan-500/30 hover:border-cyan-400/50 hover:shadow-md rounded-lg p-1.5 transition-all duration-300'
-                title='Play pronunciation'
-              >
-                <svg
-                  className='w-3 h-3 text-cyan-300 group-hover:scale-110 group-hover:text-cyan-200 transition-all duration-300'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    d='M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 14.142M9 9a3 3 0 000-6H6a3 3 0 00-3 3v6a3 3 0 003 3h3a3 3 0 000-6z'
-                  ></path>
-                </svg>
-              </button>
-            )}
           </div>
         </div>
 
         {/* Pronunciation */}
-        {wordData.phonetic && (
+        {wordData.pronunciation?.all && (
           <div className='text-center mb-3'>
             <span className='text-cyan-300 font-mono text-sm bg-cyan-900/30 px-3 py-1 rounded-full border border-cyan-500/30'>
-              {wordData.phonetic}
+              /{wordData.pronunciation.all}/
             </span>
           </div>
         )}
 
+        {/* Word Info */}
+        {(wordData.frequency || wordData.syllables) && (
+          <div className='flex flex-wrap gap-2 mb-3'>
+            {wordData.frequency && (
+              <span className='bg-purple-700/40 text-purple-200 text-xs font-medium px-2 py-0.5 rounded-md border border-purple-500/30'>
+                Frequency: {wordData.frequency}
+              </span>
+            )}
+            {wordData.syllables && (
+              <span className='bg-green-700/40 text-green-200 text-xs font-medium px-2 py-0.5 rounded-md border border-green-500/30'>
+                Syllables: {wordData.syllables.count} (
+                {wordData.syllables.list?.join('-') || 'N/A'})
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Parts of Speech Tags */}
-        <div className='flex flex-wrap gap-1.5 mb-3'>
-          {wordData.meanings.map((meaning, index) => (
-            <span
-              key={index}
-              className='bg-cyan-700/40 text-cyan-200 text-xs font-medium px-2 py-0.5 rounded-md border border-cyan-500/30 uppercase tracking-wide'
-            >
-              {meaning.partOfSpeech}
-            </span>
-          ))}
-        </div>
+        {wordData.results && wordData.results.length > 0 && (
+          <div className='flex flex-wrap gap-1.5 mb-3'>
+            {[
+              ...new Set(
+                wordData.results.map((r) => r.partOfSpeech).filter(Boolean)
+              ),
+            ].map((partOfSpeech, index) => (
+              <span
+                key={index}
+                className='bg-cyan-700/40 text-cyan-200 text-xs font-medium px-2 py-0.5 rounded-md border border-cyan-500/30 uppercase tracking-wide'
+              >
+                {partOfSpeech}
+              </span>
+            ))}
+          </div>
+        )}
 
-        {/* Meanings Card */}
-        <div className='bg-slate-800/30 backdrop-blur-sm border border-white/10 rounded-lg p-3 space-y-3'>
-          {wordData.meanings.map((meaning, index) => (
-            <div key={index} className='space-y-2'>
-              <div className='flex items-center space-x-2'>
-                <span className='text-xs font-semibold text-cyan-300 uppercase tracking-wider bg-cyan-700/40 px-2 py-0.5 rounded'>
-                  {meaning.partOfSpeech}
-                </span>
-                <div className='flex-1 h-px bg-white/10'></div>
-                <span className='text-xs text-slate-400 font-mono'>
-                  {meaning.definitions.length}
-                </span>
-              </div>
+        {/* Results/Definitions */}
+        {wordData.results && wordData.results.length > 0 && (
+          <div className='bg-slate-800/30 backdrop-blur-sm border border-white/10 rounded-lg p-3 space-y-3'>
+            {wordData.results.map((result, index) => (
+              <div key={index} className='space-y-2'>
+                <div className='flex items-center space-x-2'>
+                  {result.partOfSpeech && (
+                    <span className='text-xs font-semibold text-cyan-300 uppercase tracking-wider bg-cyan-700/40 px-2 py-0.5 rounded'>
+                      {result.partOfSpeech}
+                    </span>
+                  )}
+                  <div className='flex-1 h-px bg-white/10'></div>
+                </div>
 
-              {/* First Definition */}
-              {meaning.definitions.slice(0, 1).map((def, defIndex) => (
-                <div key={defIndex} className='space-y-2 ml-2'>
+                {/* Definition */}
+                <div className='space-y-2 ml-2'>
                   <div className='bg-slate-700/30 border border-white/10 rounded-md p-2.5'>
                     <p className='text-slate-200 leading-relaxed text-sm'>
-                      {def.definition}
+                      {result.definition}
                     </p>
                   </div>
-                  {def.example && (
+
+                  {/* Examples */}
+                  {result.examples && result.examples.length > 0 && (
                     <div className='bg-blue-900/20 border border-blue-500/20 rounded-md p-2 ml-2'>
                       <p className='text-blue-300 italic text-xs'>
-                        "{def.example}"
+                        "{result.examples[0]}"
                       </p>
+                      {result.examples.length > 1 && (
+                        <div className='mt-1 space-y-1'>
+                          {result.examples
+                            .slice(1, 3)
+                            .map((example, exIndex) => (
+                              <p
+                                key={exIndex}
+                                className='text-blue-300 italic text-xs opacity-80'
+                              >
+                                "{example}"
+                              </p>
+                            ))}
+                          {result.examples.length > 3 && (
+                            <p className='text-blue-400 text-xs'>
+                              +{result.examples.length - 3} more examples
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
-                  {def.synonyms && def.synonyms.length > 0 && (
+
+                  {/* Synonyms */}
+                  {result.synonyms && result.synonyms.length > 0 && (
                     <div className='ml-2'>
                       <span className='text-xs font-medium text-cyan-400 uppercase tracking-wide'>
                         Synonyms:
                       </span>
                       <div className='mt-1 flex flex-wrap gap-1'>
-                        {def.synonyms.slice(0, 4).map((synonym, synIndex) => (
-                          <span
-                            key={synIndex}
-                            className='bg-cyan-700/40 text-cyan-200 text-xs px-2 py-0.5 rounded border border-cyan-500/30 hover:bg-cyan-600/40 transition-colors duration-200'
-                          >
-                            {synonym}
-                          </span>
-                        ))}
-                        {def.synonyms.length > 4 && (
+                        {result.synonyms
+                          .slice(0, 4)
+                          .map((synonym, synIndex) => (
+                            <span
+                              key={synIndex}
+                              className='bg-cyan-700/40 text-cyan-200 text-xs px-2 py-0.5 rounded border border-cyan-500/30 hover:bg-cyan-600/40 transition-colors duration-200'
+                            >
+                              {synonym}
+                            </span>
+                          ))}
+                        {result.synonyms.length > 4 && (
                           <span className='text-xs text-cyan-400 px-2 py-0.5'>
-                            +{def.synonyms.length - 4} more
+                            +{result.synonyms.length - 4} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Antonyms */}
+                  {result.antonyms && result.antonyms.length > 0 && (
+                    <div className='ml-2'>
+                      <span className='text-xs font-medium text-red-400 uppercase tracking-wide'>
+                        Antonyms:
+                      </span>
+                      <div className='mt-1 flex flex-wrap gap-1'>
+                        {result.antonyms
+                          .slice(0, 4)
+                          .map((antonym, antIndex) => (
+                            <span
+                              key={antIndex}
+                              className='bg-red-700/40 text-red-200 text-xs px-2 py-0.5 rounded border border-red-500/30 hover:bg-red-600/40 transition-colors duration-200'
+                            >
+                              {antonym}
+                            </span>
+                          ))}
+                        {result.antonyms.length > 4 && (
+                          <span className='text-xs text-red-400 px-2 py-0.5'>
+                            +{result.antonyms.length - 4} more
                           </span>
                         )}
                       </div>
                     </div>
                   )}
                 </div>
-              ))}
-
-              {/* Show More Button */}
-              {meaning.definitions.length > 1 && (
-                <>
-                  <button
-                    onClick={() => toggleDefinitions(index)}
-                    className='ml-2 text-xs text-cyan-300 hover:text-cyan-200 font-medium tracking-wide transition-colors duration-200 flex items-center space-x-1'
-                  >
-                    <span>
-                      {expandedDefinitions[index]
-                        ? 'Show less'
-                        : `Show ${meaning.definitions.length - 1} more`}
-                    </span>
-                    <svg
-                      className='w-3 h-3 transition-transform duration-200'
-                      style={{
-                        transform: expandedDefinitions[index]
-                          ? 'rotate(180deg)'
-                          : 'rotate(0deg)',
-                      }}
-                      fill='none'
-                      stroke='currentColor'
-                      viewBox='0 0 24 24'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth='2'
-                        d='M19 9l-7 7-7-7'
-                      ></path>
-                    </svg>
-                  </button>
-                  {expandedDefinitions[index] && (
-                    <div className='space-y-2 ml-2 animate-slide-up'>
-                      {meaning.definitions.slice(1).map((def, defIndex) => (
-                        <div key={defIndex} className='space-y-1.5'>
-                          <div className='bg-slate-700/30 border border-white/10 rounded-md p-2.5'>
-                            <p className='text-slate-200 leading-relaxed text-sm'>
-                              {def.definition}
-                            </p>
-                          </div>
-                          {def.example && (
-                            <div className='bg-blue-900/20 border border-blue-500/20 rounded-md p-2 ml-2'>
-                              <p className='text-blue-300 italic text-xs'>
-                                "{def.example}"
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

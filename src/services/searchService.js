@@ -128,22 +128,40 @@ class SearchService {
 
     try {
       const response = await fetch(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(
+        `https://wordsapiv1.p.rapidapi.com/words/${encodeURIComponent(
           trimmedWord
-        )}`
+        )}/`,
+        {
+          method: 'GET',
+          headers: {
+            'X-RapidAPI-Host': import.meta.env.VITE_RAPIDAPI_HOST,
+            'X-RapidAPI-Key': import.meta.env.VITE_RAPIDAPI_KEY,
+          },
+        }
       );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          // Word not found
+          this.addToHistory(trimmedWord, null);
+          throw new NotFoundError(
+            `"${trimmedWord}" could not be found in the dictionary.`
+          );
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const data = await response.json();
 
-      if (data.title || !Array.isArray(data)) {
-        // Word not found
+      if (!data || !data.word) {
+        // Invalid response or word not found
         this.addToHistory(trimmedWord, null);
         throw new NotFoundError(
           `"${trimmedWord}" could not be found in the dictionary.`
         );
       }
 
-      // Cache and save to history
+      // Cache and save to history with original Words API format
       this.cacheWord(trimmedWord, data);
       this.addToHistory(trimmedWord, data);
 
