@@ -96,7 +96,7 @@ function App() {
         />
 
         {/* Word of the Day - Always visible */}
-        <div className='mb-3'>
+        <div className='mt-3'>
           <WordOfTheDay onWordClick={handleWordOfTheDayClick} />
         </div>
 
