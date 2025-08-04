@@ -1,5 +1,3 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
 class SearchService {
   constructor() {
     this.DICTIONARY_CACHE_KEY = 'dictionary_cache';
@@ -88,11 +86,7 @@ class SearchService {
 
       // Store full result data if available
       if (result) {
-        if (result.isAIResult) {
-          historyEntry.aiResult = result;
-        } else {
-          historyEntry.dictionaryResult = result;
-        }
+        historyEntry.dictionaryResult = result;
       }
 
       history.unshift(historyEntry);
@@ -164,68 +158,6 @@ class SearchService {
       throw new Error(
         'Unable to fetch word definition. Please check your internet connection and try again.'
       );
-    }
-  }
-
-  // Search with Gemini AI (fallback)
-  async searchWithAI(word, apiKey) {
-    if (!apiKey) {
-      throw new Error('API key is required for AI search');
-    }
-
-    const trimmedWord = word.trim();
-    if (!trimmedWord) {
-      throw new Error('Please enter a word to search');
-    }
-
-    try {
-      // Initialize the Gemini AI client
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-
-      const prompt = `Define the word or phrase "${trimmedWord}" in a comprehensive way. Include:
-1. Definition(s) with part of speech
-2. Example sentence(s)
-3. Etymology if relevant
-4. Synonyms if applicable
-
-Format your response as a clear, well-structured explanation suitable for a dictionary application.`;
-
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const aiResponse = response.text();
-
-      if (!aiResponse) {
-        throw new Error('No response from AI service');
-      }
-
-      // Format AI response to match our expected structure
-      const aiResult = {
-        isAIResult: true,
-        word: trimmedWord,
-        aiDefinition: aiResponse,
-        timestamp: Date.now(),
-      };
-
-      // Add to history
-      this.addToHistory(trimmedWord, aiResult);
-
-      return aiResult;
-    } catch (error) {
-      this.addToHistory(trimmedWord, null);
-
-      // Handle specific Gemini API errors
-      if (error.message.includes('API_KEY_INVALID')) {
-        throw new Error('Invalid API key. Please check your Gemini API key.');
-      } else if (error.message.includes('QUOTA_EXCEEDED')) {
-        throw new Error('API quota exceeded. Please try again later.');
-      } else if (error.message.includes('RATE_LIMIT_EXCEEDED')) {
-        throw new Error(
-          'Rate limit exceeded. Please wait a moment and try again.'
-        );
-      }
-
-      throw new Error(`AI search failed: ${error.message}`);
     }
   }
 

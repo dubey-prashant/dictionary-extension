@@ -69,7 +69,7 @@ const SearchHistory = ({ onWordClick }) => {
               ) : (
                 <div
                   className='w-1.5 h-1.5 bg-orange-400 rounded-full'
-                  title='Not found - tried AI'
+                  title='Not found'
                 ></div>
               )}
               <span className='text-xs text-slate-500 font-mono'>
