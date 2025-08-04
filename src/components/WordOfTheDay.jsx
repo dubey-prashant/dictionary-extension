@@ -1,4 +1,3 @@
-import React from 'react';
 import { useWordOfTheDay } from '../hooks/useWordOfTheDay';
 
 const WordOfTheDay = ({ onWordClick }) => {

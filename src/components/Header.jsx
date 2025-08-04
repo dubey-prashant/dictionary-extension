@@ -1,14 +1,8 @@
-import React, { useState } from 'react';
-import HistoryModal from './HistoryModal';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const Header = ({ onHistoryWordSelect }) => {
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-
-  const handleHistoryWordSelect = (result, type) => {
-    if (onHistoryWordSelect) {
-      onHistoryWordSelect(result, type);
-    }
-  };
+const Header = () => {
+  const navigate = useNavigate();
 
   return (
     <>
@@ -40,7 +34,7 @@ const Header = ({ onHistoryWordSelect }) => {
         <div className='flex items-center space-x-2'>
           {/* History Button */}
           <button
-            onClick={() => setIsHistoryOpen(true)}
+            onClick={() => navigate('/history')}
             className='bg-slate-800/50 backdrop-blur-sm border border-slate-600/30 hover:border-slate-500/50 p-2 rounded-lg transition-all duration-300 group hover:shadow-lg'
             title='Search History'
           >
@@ -60,13 +54,6 @@ const Header = ({ onHistoryWordSelect }) => {
           </button>
         </div>
       </div>
-
-      {/* History Modal */}
-      <HistoryModal
-        isOpen={isHistoryOpen}
-        onClose={() => setIsHistoryOpen(false)}
-        onWordSelect={handleHistoryWordSelect}
-      />
     </>
   );
 };
