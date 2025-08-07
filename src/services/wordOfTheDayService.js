@@ -106,13 +106,11 @@ class WordOfTheDayService {
       return cached;
     }
 
-    // Try Wordnik
+    // Try API first, fallback if needed
     try {
-      const wotd = await this.fetchFromWordnik();
-      this.cacheWOTD(wotd);
-      return wotd;
+      return await this.fetchFromWordnik();
     } catch {
-      console.log('fetchFromWordnik failed...');
+      return this.getFallbackWordOfTheDay();
     }
   }
 

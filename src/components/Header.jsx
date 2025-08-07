@@ -6,11 +6,11 @@ const Header = () => {
 
   return (
     <>
-      {/* Header with Logo, History, and Settings */}
-      <div className='flex items-center justify-between mb-3'>
-        {/* Logo */}
-        <div className='flex items-center space-x-2.5'>
-          <div className='w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center shadow-lg'>
+      {/* Minimalist Header */}
+      <div className='flex items-center justify-between mb-4'>
+        {/* Logo - Clean and Minimal */}
+        <div className='flex items-center space-x-2'>
+          <div className='w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center shadow-card'>
             <svg
               className='w-5 h-5 text-white'
               fill='none'
@@ -25,21 +25,21 @@ const Header = () => {
               ></path>
             </svg>
           </div>
-          <h1 className='text-xl font-bold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent tracking-wide'>
+          <h1 className='text-lg font-bold text-gray-800 tracking-tight'>
             LEXICON
           </h1>
         </div>
 
-        {/* Action Buttons */}
-        <div className='flex items-center space-x-2'>
+        {/* Action Buttons - Clean Design */}
+        <div className='flex items-center space-x-1'>
           {/* History Button */}
           <button
             onClick={() => navigate('/history')}
-            className='bg-slate-800/50 backdrop-blur-sm border border-slate-600/30 hover:border-slate-500/50 p-2 rounded-lg transition-all duration-300 group hover:shadow-lg'
+            className='bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 p-2 rounded-lg transition-all duration-200 group shadow-minimal hover:shadow-card focus-ring'
             title='Search History'
           >
             <svg
-              className='w-4 h-4 text-slate-400 group-hover:text-cyan-300 transition-colors duration-300'
+              className='w-4 h-4 text-gray-600 group-hover:text-indigo-600 transition-colors duration-200'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -47,7 +47,7 @@ const Header = () => {
               <path
                 strokeLinecap='round'
                 strokeLinejoin='round'
-                strokeWidth='2'
+                strokeWidth='1.5'
                 d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
               ></path>
             </svg>

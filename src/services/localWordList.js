@@ -15,16 +15,12 @@ export class LocalWordList {
       if (response.ok) {
         this.words = await response.json();
         this.isLoaded = true;
-        console.log(`Loaded ${this.words.length} local words for autocomplete`);
       } else {
         // Fallback to embedded word list
         this.loadFallbackWords();
       }
-    } catch (error) {
-      console.warn(
-        'Failed to load word list from file, using fallback:',
-        error
-      );
+    } catch {
+      // Fallback to embedded word list
       this.loadFallbackWords();
     }
   }
@@ -2121,7 +2117,6 @@ export class LocalWordList {
       'zone',
     ].sort();
     this.isLoaded = true;
-    console.log(`Loaded ${this.words.length} fallback words for autocomplete`);
   }
 
   // Get local suggestions matching the query

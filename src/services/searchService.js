@@ -6,6 +6,145 @@ class SearchService {
     this.MAX_HISTORY_ITEMS = 500;
   }
 
+  /**
+   * Our standardized dictionary schema:
+   * {
+   *   word: string,
+   *   pronunciation: {
+   *     text: string,
+   *     audio?: string
+   *   },
+   *   meanings: [
+   *     {
+   *       partOfSpeech: string,
+   *       definitions: [
+   *         {
+   *           definition: string,
+   *           example?: string,
+   *           synonyms?: string[],
+   *           antonyms?: string[]
+   *         }
+   *       ]
+   *     }
+   *   ],
+   *   source: string, // 'wordsapi' | 'dictionaryapi'
+   *   timestamp: number
+   * }
+   */
+
+  // Transform Words API data to our schema
+  transformWordsAPIData(data) {
+    const meanings = new Map();
+
+    // Group definitions by part of speech
+    if (data.results && Array.isArray(data.results)) {
+      data.results.forEach((result) => {
+        const partOfSpeech = result.partOfSpeech || 'unknown';
+
+        if (!meanings.has(partOfSpeech)) {
+          meanings.set(partOfSpeech, {
+            partOfSpeech,
+            definitions: [],
+          });
+        }
+
+        const definition = {
+          definition: result.definition,
+        };
+
+        if (result.examples && result.examples.length > 0) {
+          definition.example = result.examples[0];
+        }
+
+        if (result.synonyms && result.synonyms.length > 0) {
+          definition.synonyms = result.synonyms;
+        }
+
+        if (result.antonyms && result.antonyms.length > 0) {
+          definition.antonyms = result.antonyms;
+        }
+
+        meanings.get(partOfSpeech).definitions.push(definition);
+      });
+    }
+
+    return {
+      word: data.word,
+      pronunciation: data.pronunciation
+        ? {
+            text: data.pronunciation.all,
+          }
+        : null,
+      meanings: Array.from(meanings.values()),
+      source: 'wordsapi',
+      timestamp: Date.now(),
+    };
+  }
+
+  // Transform Dictionary API data to our schema
+  transformDictionaryAPIData(data) {
+    const meanings = [];
+
+    if (data.meanings && Array.isArray(data.meanings)) {
+      data.meanings.forEach((meaning) => {
+        const meaningObj = {
+          partOfSpeech: meaning.partOfSpeech,
+          definitions: [],
+        };
+
+        if (meaning.definitions && Array.isArray(meaning.definitions)) {
+          meaning.definitions.forEach((def) => {
+            const definition = {
+              definition: def.definition,
+            };
+
+            if (def.example) {
+              definition.example = def.example;
+            }
+
+            if (def.synonyms && def.synonyms.length > 0) {
+              definition.synonyms = def.synonyms;
+            }
+
+            if (def.antonyms && def.antonyms.length > 0) {
+              definition.antonyms = def.antonyms;
+            }
+
+            meaningObj.definitions.push(definition);
+          });
+        }
+
+        meanings.push(meaningObj);
+      });
+    }
+
+    // Extract pronunciation
+    let pronunciation = null;
+    if (
+      data.phonetics &&
+      Array.isArray(data.phonetics) &&
+      data.phonetics.length > 0
+    ) {
+      const phonetic = data.phonetics.find((p) => p.text) || data.phonetics[0];
+      if (phonetic) {
+        pronunciation = {
+          text: phonetic.text,
+        };
+        if (phonetic.audio) {
+          pronunciation.audio = phonetic.audio;
+        }
+      }
+    }
+
+    return {
+      word: data.word,
+      pronunciation,
+      meanings,
+      source: 'dictionaryapi',
+      timestamp: Date.now(),
+    };
+  }
+
   // Get cached dictionary result
   getCachedWord(word) {
     try {
@@ -112,18 +251,12 @@ class SearchService {
     }
   }
 
-  // Search dictionary with caching
-  async searchDictionary(word) {
+  // Search Words API (RapidAPI)
+  async searchWordsAPI(word) {
     const trimmedWord = word.trim();
+
     if (!trimmedWord) {
       throw new Error('Please enter a word to search');
-    }
-
-    // Check cache first
-    const cached = this.getCachedWord(trimmedWord);
-    if (cached) {
-      this.addToHistory(trimmedWord, cached);
-      return cached;
     }
 
     try {
@@ -142,37 +275,114 @@ class SearchService {
 
       if (!response.ok) {
         if (response.status === 404) {
-          // Word not found
-          this.addToHistory(trimmedWord, null);
           throw new NotFoundError(
-            `"${trimmedWord}" could not be found in the dictionary.`
+            `"${trimmedWord}" could not be found in Words API.`
           );
         }
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Words API HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
 
       if (!data || !data.word) {
-        // Invalid response or word not found
-        this.addToHistory(trimmedWord, null);
+        throw new NotFoundError(
+          `"${trimmedWord}" could not be found in Words API.`
+        );
+      }
+
+      return this.transformWordsAPIData(data);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error;
+      }
+      throw new Error('Unable to fetch from Words API: ' + error.message);
+    }
+  }
+
+  // Search Dictionary API (Free API)
+  async searchDictionaryAPI(word) {
+    const trimmedWord = word.trim();
+
+    if (!trimmedWord) {
+      throw new Error('Please enter a word to search');
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(
+          trimmedWord
+        )}`,
+        {
+          method: 'GET',
+        }
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new NotFoundError(
+            `"${trimmedWord}" could not be found in Dictionary API.`
+          );
+        }
+        throw new Error(
+          `Dictionary API HTTP error! status: ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+
+      if (!data || !Array.isArray(data) || data.length === 0) {
+        throw new NotFoundError(
+          `"${trimmedWord}" could not be found in Dictionary API.`
+        );
+      }
+
+      return this.transformDictionaryAPIData(data[0]);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error;
+      }
+      throw new Error('Unable to fetch from Dictionary API: ' + error.message);
+    }
+  }
+
+  // Main search function using Dictionary API as primary
+  async searchDictionary(word) {
+    const trimmedWord = word.trim();
+
+    if (!trimmedWord) {
+      throw new Error('Please enter a word to search');
+    }
+
+    // Check cache first
+    const cached = this.getCachedWord(trimmedWord);
+    if (cached) {
+      this.addToHistory(trimmedWord, cached);
+      return cached;
+    }
+
+    try {
+      // Use Dictionary API as primary source
+      const standardData = await this.searchDictionaryAPI(trimmedWord);
+
+      // Cache in our standard format
+      this.cacheWord(trimmedWord, standardData);
+
+      // Add to history
+      this.addToHistory(trimmedWord, standardData);
+
+      return standardData;
+    } catch (error) {
+      // Add failed search to history
+      this.addToHistory(trimmedWord, null);
+
+      // If it fails, throw the error
+      if (error instanceof NotFoundError) {
         throw new NotFoundError(
           `"${trimmedWord}" could not be found in the dictionary.`
         );
       }
 
-      // Cache and save to history with original Words API format
-      this.cacheWord(trimmedWord, data);
-      this.addToHistory(trimmedWord, data);
-
-      return data;
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        throw error;
-      }
-
-      // Network or other error
-      this.addToHistory(trimmedWord, null);
+      // For network errors, throw a general error
       throw new Error(
         'Unable to fetch word definition. Please check your internet connection and try again.'
       );

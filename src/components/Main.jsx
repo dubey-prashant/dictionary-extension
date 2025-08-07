@@ -55,15 +55,21 @@ function Main() {
   };
 
   return (
-    <div className='w-96 min-h-[500px] bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 z-10 relative overflow-hidden'>
+    <div className=''>
       {/* Header with Logo, History, and Settings */}
       <Header />
 
       {/* Search Form */}
       <SearchForm
-        onSearch={setSearchResult}
-        onLoading={setIsLoading}
-        onError={setError}
+        onSearch={(result) => {
+          setSearchResult(result);
+        }}
+        onLoading={(loading) => {
+          setIsLoading(loading);
+        }}
+        onError={(err) => {
+          setError(err);
+        }}
       />
 
       <ResultsDisplay

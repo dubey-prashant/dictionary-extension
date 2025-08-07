@@ -85,8 +85,7 @@ export const useAutocomplete = () => {
             cacheRef.current.delete(firstKey);
           }
         }
-      } catch (error) {
-        console.warn('API suggestions failed:', error);
+      } catch {
         // Keep the local suggestions we already have
         if (currentQueryRef.current === cacheKey) {
           cacheRef.current.set(cacheKey, localSuggestions);
