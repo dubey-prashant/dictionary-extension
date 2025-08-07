@@ -25,7 +25,7 @@ const Header = () => {
               ></path>
             </svg>
           </div>
-          <h1 className='text-lg font-bold text-gray-800 tracking-tight'>
+          <h1 className='text-lg font-bold text-indigo-900 tracking-tight'>
             LEXICON
           </h1>
         </div>
