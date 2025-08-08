@@ -1,166 +1,60 @@
-# Lexicon - Minimalist Dictionary Extension
+# 📖 Lexicon Dictionary - Your Smart Vocabulary Companion
 
-A beautiful, fast, and intelligent dictionary extension with smart caching and comprehensive word information.
+> A beautiful, lightning-fast dictionary extension that learns with you. Get instant definitions, explore new words daily, and build your vocabulary effortlessly.
 
-## ✨ Features
+## 🚀 Install Now
 
-### 🔍 **Smart Dictionary Search**
+[![Chrome Web Store](https://img.shields.io/badge/Chrome-Install-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/lexicon/ecjhibfihcgalgmeainnjemfcdlmaldm)
+[![Microsoft Edge](https://img.shields.io/badge/Edge-Install-0078D4?style=for-the-badge&logo=microsoftedge&logoColor=white)](https://microsoftedge.microsoft.com/addons/detail/dictionary-dubeytech/ohennnffikahbbihomgmkflmljfggiad)
 
-- **Primary API**: Uses [Words API](https://rapidapi.com/dpventures/api/wordsapi) for comprehensive word definitions and rich linguistic data
-- **Intelligent Caching**: Stores searched words locally for 1 year - no repeat API calls
-- **Rich Word Data**: Provides definitions, synonyms, antonyms, examples, pronunciation, syllables, and frequency
-- **Hybrid Autocomplete**: Combines local word list (15,000+ words) with Datamuse API for instant + comprehensive suggestions
-- **Local Word List**: Uses SCOWL (Spell Checker Oriented Word Lists) for offline suggestions
-- **Multiple Pronunciations**: Displays pronunciation guides for different dialects
+## ✨ Why You'll Love Lexicon
 
-### 🌟 **Word of the Day**
+🚀 **Instant Results** - Smart caching means zero wait time for words you've looked up before  
+🎯 **Smart Suggestions** - Type a few letters and get intelligent autocomplete suggestions  
+📚 **Complete Word Info** - Definitions, synonyms, examples, pronunciation - everything in one place  
+🌟 **Word of the Day** - Discover new vocabulary with beautiful daily word features  
+📈 **Track Your Progress** - Built-in search history to see how your vocabulary grows  
+🎨 **Beautiful Design** - Clean, minimalist interface that's easy on the eyes
 
-- **Primary Source**: [api.wotd.site](https://api.wotd.site) with Wordnik backup
-- **Daily Caching**: Fetches once per day, cached in localStorage
-- **Auto-cleanup**: Removes old cache entries automatically
-- **Fallback System**: Beautiful curated words if APIs are unavailable
+## 🔥 Key Features
 
-### 📚 **Comprehensive Word Information**
+### **Comprehensive Dictionary**
 
-- **Multiple Definitions**: Shows all definitions organized by part of speech
-- **Rich Examples**: Multiple usage examples for better understanding
-- **Synonyms & Antonyms**: Comprehensive lists for vocabulary building
-- **Word Frequency**: Indicates how commonly used a word is
-- **Syllable Breakdown**: Shows syllable count and division
-- **Pronunciation Guide**: Multiple pronunciation variants
+- **Rich Definitions** with multiple meanings and parts of speech
+- **Real Examples** showing how words are used in context
+- **Synonyms & Antonyms** to expand your vocabulary
+- **Pronunciation Guide** with audio support
+- **Word Frequency** to know how common a word is
 
-### 💾 **Smart Caching Strategy**
+### 🌟 **Daily Word Discovery**
 
-- **Dictionary Cache**: 1-year expiry, size-limited (100 entries max)
-- **Word of the Day Cache**: Daily refresh, keeps last 7 days
-- **Search History**: Tracks up to 500 recent searches with full data
-- **Auto-cleanup**: Removes expired entries automatically
+- **Word of the Day** with beautiful visual cards
+- **Curated Content** featuring interesting and useful words
+- **Learn Something New** every time you open the extension
 
-### 🎨 **Minimalist UI**
+### 🧠 **Smart Learning**
 
-- **Compact Design**: Clean, space-efficient layout
-- **Cyberpunk Theme**: Beautiful gradient backgrounds with subtle animations
-- **Responsive**: Works on all screen sizes
-- **Accessibility**: Keyboard navigation and screen reader friendly
+- **Search History** - never lose track of words you've learned
+- **Instant Autocomplete** as you type
+- **Local Storage** - your favorite words available offline
+- **Progress Tracking** - see your vocabulary journey
 
-### 📊 **Advanced Features**
+### 🎨 **Delightful Experience**
 
-- **Full-Page Search History**: Dedicated history page with search and filtering
-- **Route-Based Navigation**: Clean navigation between main search and history
-- **Error Handling**: Graceful fallbacks for network issues
-- **Performance**: Instant results for cached words
+- **Minimalist Design** that focuses on content
+- **Smooth Animations** and responsive interface
+- **Fast & Reliable** - works even when your connection is slow
+- **Privacy First** - all your data stays on your device
 
-## 🛠️ Development
+### Get Started in Seconds
 
-### Prerequisites
+1. **Install** the extension from Chrome Web Store
+2. **Start Searching** - just type any word you want to know
+3. **Discover Daily** - check out the Word of the Day
+4. **Build Your Vocabulary** - track your progress in search history
 
-- Node.js (v18+)
-- npm
-- Words API key from [RapidAPI](https://rapidapi.com/dpventures/api/wordsapi)
+That's it! No sign-ups, no complicated setup. Just instant access to a world of words.
 
-### Setup
+---
 
-1. **Clone the repository**
-
-```bash
-git clone <repository-url>
-cd dictionary-extension
-```
-
-2. **Install dependencies**
-
-```bash
-npm install
-```
-
-3. **Set up environment variables**
-
-```bash
-# Copy the example environment file
-cp .env.example .env
-
-# Edit .env and add your Words API key
-VITE_RAPIDAPI_KEY=your_rapidapi_key_here
-VITE_RAPIDAPI_HOST=wordsapiv1.p.rapidapi.com
-```
-
-4. **Get your Words API key**
-
-   - Visit [Words API on RapidAPI](https://rapidapi.com/dpventures/api/wordsapi)
-   - Sign up for a free account
-   - Subscribe to the free tier (500 requests/month)
-   - Copy your API key to the `.env` file
-
-5. **Start development server**
-
-```bash
-npm run dev
-```
-
-6. **Build for production**
-
-```bash
-npm run build
-```
-
-5. **Enter your API key** when prompted - it will be saved securely in your browser
-
-**Note**: The API key is stored locally in your browser and never sent to our servers.
-
-### Browser Extension Installation
-
-1. Build the project: `npm run build`
-2. Open Chrome/Edge and go to `chrome://extensions/`
-3. Enable "Developer mode"
-4. Click "Load unpacked" and select the `dist` folder
-
-## 📁 Project Structure
-
-```
-src/
-├── App.jsx           # Main app component with all functionality
-├── main.jsx          # React entry point
-└── styles.css        # Custom styles
-
-public/
-├── manifest.json     # Extension manifest
-└── logo.png         # Extension icon
-
-dist/                 # Built extension (after npm run build)
-├── index.html
-├── popup.js
-├── popup.css
-├── manifest.json
-└── logo.png
-```
-
-## 🎨 Design Features
-
-- **Glassmorphism**: Translucent cards with backdrop blur
-- **Animated Background**: Floating particles and gradient mesh
-- **Neon Accents**: Cyberpunk-inspired color scheme
-- **Smooth Animations**: Hover effects and transitions
-- **Responsive**: Optimized for extension popup size (384px width)
-
-## 🔧 Tech Stack
-
-- **React 18**: Modern component-based UI
-- **Vite**: Fast build tool and dev server
-- **Tailwind CSS**: Utility-first styling (via CDN)
-- **Browser Extension API**: Manifest V3 compatible
-
-## 📝 Original Implementation
-
-This React version is a faithful port of the original vanilla JavaScript implementation, preserving all functionality and styling while adding React's component structure and state management benefits.
-
-## 🎯 Future Features
-
-Ready for additional features like:
-
-- Autocomplete suggestions
-- Search history
-- Context menu integration
-- Google authentication + sync
-- Achievements system
-- Multi-word phrase support
-- AI-powered definitions
+_Made with ❤️ for word lovers and lifelong learners_
