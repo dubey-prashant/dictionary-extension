@@ -1,14 +1,18 @@
 {
   "name": "LEXICON",
-  "description": "Fast and elegant English dictionary with definitions, examples, pronunciations, and synonyms. Look up any word instantly with a beautiful, modern interface.",
-  "version": "1.0.0",
+  "description": "Fast English dictionary with pronunciations, examples, search history & word of the day.",
+  "version": "2.0.1",
   "author": "Prashant Dubey",
   "manifest_version": 3,
   "action": {
     "default_popup": "index.html",
-    "default_icon": "icon.png"
+    "default_icon": "icon.png",
+    "default_title": "LEXICON - Dictionary Lookup"
   },
-  "permissions": [
-    "activeTab"
-  ]
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "permissions": []
 }
